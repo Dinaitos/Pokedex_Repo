@@ -9,10 +9,10 @@
     tools:context=".Login_Activity">
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/Login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Iniciar Sesion"
+        android:text="@string/btn_login"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.263"
@@ -21,24 +21,25 @@
         app:layout_constraintVertical_bias="0.732" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/Registrarse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Registrarse"
+        android:text="@string/btn_register"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.084"
-        app:layout_constraintStart_toEndOf="@+id/button1"
+        app:layout_constraintStart_toEndOf="@+id/Login"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.732" />
 
     <EditText
-        android:id="@+id/editTextTextPassword"
+        android:id="@+id/TextPassword"
         android:layout_width="263dp"
         android:layout_height="53dp"
         android:ems="10"
         android:inputType="textPassword"
-        android:text="Password"
+        android:hint="@string/hint_password"
+        android:autofillHints="password"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,12 +49,13 @@
         app:layout_constraintVertical_bias="0.631" />
 
     <EditText
-        android:id="@+id/editTextTextEmailAddress"
+        android:id="@+id/TextEmail"
         android:layout_width="262dp"
         android:layout_height="56dp"
         android:ems="10"
         android:inputType="textEmailAddress"
-        android:text="Ingresar mail"
+        android:hint="@string/hint_email"
+        android:autofillHints="emailAddress"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -65,12 +67,23 @@
     <CheckBox
         android:id="@+id/reUsuario"
         android:layout_width="155dp"
-        android:layout_height="36dp"
-        android:text="Recordar usuario"
+        android:layout_height="48dp"
+        android:text="@string/remember_user"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.68" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.483"
+        app:srcCompat="@drawable/pokedex"
+        android:contentDescription="@string/logo_desc" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

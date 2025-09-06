@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Pokedex_Repo</string>
+    <string name="btn_login">Iniciar sesión</string>
+    <string name="btn_register">Registrarse</string>
+    <string name="hint_email">Ingresar email</string>
+    <string name="hint_password">Ingresar contraseña</string>
+    <string name="remember_user">Recordar usuario</string>
+    <string name="logo_desc">Logo de la aplicación</string>
 </resources>
