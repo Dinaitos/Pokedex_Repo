@@ -8,8 +8,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+
 
 class Login_Activity : AppCompatActivity() {
 
@@ -24,13 +23,6 @@ class Login_Activity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
 
-        // Ajuste para notch/barras
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
         // Referencias a los elementos del XML
         textEmail = findViewById(R.id.TextEmail)
         textPassword = findViewById(R.id.TextPassword)
@@ -40,18 +32,18 @@ class Login_Activity : AppCompatActivity() {
 
         // Botón Registrarse
         btnRegistrarse.setOnClickListener {
-            Toast.makeText(this, "Crear Usuario", Toast.LENGTH_SHORT).show()
-            // más adelante: startActivity(Intent(this, RegistroActivity::class.java))
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
         }
 
         // Botón Iniciar sesión
         btnLogin.setOnClickListener {
             Toast.makeText(this, "Iniciar Sesión", Toast.LENGTH_SHORT).show()
 
-            // Pasa directo a MainActivity (sin validar por ahora)
+            // Pasa directo a MainActivity sin validar por ahora
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
-            finish() // cierra el login para que no vuelva atrás
+            finish() // cierra el login para que no vuelva atras
         }
     }
 }
