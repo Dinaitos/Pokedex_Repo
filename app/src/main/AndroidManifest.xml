@@ -13,6 +13,7 @@
         <activity
             android:name=".RegisterActivity"
             android:exported="false" />
+
         <!-- Splash como pantalla inicial -->
         <activity
             android:name=".Splash_Activity"
@@ -22,13 +23,20 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Login sin intent-filter -->
+        </activity>
+        <!-- Login -->
         <activity
             android:name=".Login_Activity"
-            android:exported="true" /> <!-- Main sin intent-filter -->
+            android:exported="true" />
+        <!-- Main -->
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+        <!-- Detail -->
+        <activity
+            android:name=".DetailActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

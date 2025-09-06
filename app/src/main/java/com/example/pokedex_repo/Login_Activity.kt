@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 
-
 class Login_Activity : AppCompatActivity() {
 
     private lateinit var textEmail: EditText
@@ -44,6 +43,7 @@ class Login_Activity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish() // cierra el login para que no vuelva atras
+
         }
     }
 }
