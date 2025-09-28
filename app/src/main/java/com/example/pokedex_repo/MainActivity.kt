@@ -3,23 +3,18 @@ package com.example.pokedex_repo
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import com.example.pokedex_repo.R
+
 
 class MainActivity : AppCompatActivity() {
 
-    private val pokemonList = arrayListOf(
-        Pokemon("Pikachu", "0.4m", "6kg", R.drawable.pikachu),
-        Pokemon("Charmander", "0.6m", "8kg", R.drawable.charmander),
-        Pokemon("Bulbasaur", "0.7m", "7kg", R.drawable.bulbasaur),
-        Pokemon("Squirtle", "0.5m", "9kg", R.drawable.squirtle),
-        Pokemon("Jigglypuff", "0.5m", "5kg", R.drawable.jigglypuff),
-        Pokemon("Meowth", "0.4m", "4kg", R.drawable.meowth),
-        Pokemon("Psyduck", "0.6m", "8kg", R.drawable.psyduck),
-        Pokemon("Snorlax", "2.1m", "460kg", R.drawable.snorlax),
-        Pokemon("Gengar", "1.5m", "40kg", R.drawable.gengar),
-    )
+    private lateinit var rvPokemon: RecyclerView
+    private lateinit var adapter: PokemonAdapter
+    private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,16 +24,16 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setLogo(R.drawable.pokedex)
 
-        val rvPokemon: RecyclerView = findViewById(R.id.rvPokemon)
+        rvPokemon = findViewById(R.id.rvPokemon)
         rvPokemon.layoutManager = LinearLayoutManager(this)
-        rvPokemon.adapter = PokemonAdapter(pokemonList) { pokemon ->
+
+        adapter = PokemonAdapter(emptyList()) { pokemon ->
             val intent = Intent(this, DetailActivity::class.java).apply {
                 putExtra("name", pokemon.name)
                 putExtra("height", pokemon.height)
                 putExtra("weight", pokemon.weight)
                 putExtra("imageRes", pokemon.imageRes)
-
-                putExtra("description", when(pokemon.name) {
+                putExtra("description", when (pokemon.name) {
                     "Pikachu" -> getString(R.string.descripcion_pika)
                     "Charmander" -> getString(R.string.descripcion_char)
                     else -> ""
@@ -46,6 +41,32 @@ class MainActivity : AppCompatActivity() {
             }
             startActivity(intent)
         }
+        rvPokemon.adapter = adapter
+
+        // inicializar base de datos
+        db = AppDatabase.getDatabase(this)
+
+        // cargar datos
+        lifecycleScope.launch {
+            // si la base esta vacia, insertar lista inicial
+            if (db.pokemonDao().getAll().isEmpty()) {
+                db.pokemonDao().insertAll(
+                    listOf(
+                        Pokemon(name = "Pikachu", height = "0.4m", weight = "6kg", imageRes = R.drawable.pikachu),
+                        Pokemon(name = "Charmander", height = "0.6m", weight = "8kg", imageRes = R.drawable.charmander),
+                        Pokemon(name = "Bulbasaur", height = "0.7m", weight = "7kg", imageRes = R.drawable.bulbasaur),
+                        Pokemon(name = "Squirtle", height = "0.5m", weight = "9kg", imageRes = R.drawable.squirtle),
+                        Pokemon(name = "Jigglypuff", height = "0.5m", weight = "5kg", imageRes = R.drawable.jigglypuff),
+                        Pokemon(name = "Meowth", height = "0.4m", weight = "4kg", imageRes = R.drawable.meowth),
+                        Pokemon(name = "Psyduck", height = "0.6m", weight = "8kg", imageRes = R.drawable.psyduck),
+                        Pokemon(name = "Snorlax", height = "2.1m", weight = "460kg", imageRes = R.drawable.snorlax),
+                        Pokemon(name = "Gengar", height = "1.5m", weight = "40kg", imageRes = R.drawable.gengar)
+                    )
+                )
+            }
+            // obtener lista desde Room
+            val pokemons = db.pokemonDao().getAll()
+            adapter.updateData(pokemons)
+        }
     }
 }
-
