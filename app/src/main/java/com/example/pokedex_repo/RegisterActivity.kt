@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.enableEdgeToEdge
+import java.io.FileOutputStream
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -30,11 +31,21 @@ class RegisterActivity : AppCompatActivity() {
 
         // Botón Registrarse
         btnNewUser.setOnClickListener {
-            Toast.makeText(this, "Usuario creado", Toast.LENGTH_SHORT).show()
-            // Vuelve al login
-            val intent = Intent(this, Login_Activity::class.java)
-            startActivity(intent)
-            finish()
+            val user = nickName.text.toString().trim()
+            val mail = email.text.toString().trim()
+            val pass = password.text.toString().trim()
+
+            if (user.isEmpty() || mail.isEmpty() || pass.isEmpty()) {
+                Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
+            } else {
+                guardarUsuario(user, mail, pass)
+                Toast.makeText(this, "Usuario registrado con éxito", Toast.LENGTH_SHORT).show()
+
+                // Vuelve al login
+                val intent = Intent(this, Login_Activity::class.java)
+                startActivity(intent)
+                finish()
+            }
         }
 
         // Botón Regresar
@@ -43,6 +54,17 @@ class RegisterActivity : AppCompatActivity() {
             val intent = Intent(this, Login_Activity::class.java)
             startActivity(intent)
             finish()
+        }
+    }
+
+    private fun guardarUsuario(user: String, mail: String, pass: String) {
+        try {
+            val fos: FileOutputStream = openFileOutput("usuarios.txt", MODE_APPEND)
+            val linea = "$user;$mail;$pass\n"
+            fos.write(linea.toByteArray())
+            fos.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
