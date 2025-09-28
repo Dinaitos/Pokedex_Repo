@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class PokemonAdapter(
-    private val list: List<Pokemon>,
+    private var list: List<Pokemon>,
     private val onItemClick: (Pokemon) -> Unit
 ) : RecyclerView.Adapter<PokemonAdapter.ViewHolder>() {
 
@@ -29,5 +29,13 @@ class PokemonAdapter(
         holder.itemView.setOnClickListener { onItemClick(pokemon) }
     }
 
+    fun updateData(newList: List<Pokemon>) {
+        list = newList
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int = list.size
 }
+
+
+
