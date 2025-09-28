@@ -2,13 +2,14 @@ package com.example.pokedex_repo
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import com.example.pokedex_repo.R
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,12 +19,24 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Verificar sesión antes de cargar la UI
+        val prefs = getSharedPreferences("preferenciasLogin", MODE_PRIVATE)
+        val sesionRecordada = prefs.getBoolean("recordarme", false)
+        if (!sesionRecordada) {
+            startActivity(Intent(this, Login_Activity::class.java))
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_main)
 
+        // Toolbar
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setLogo(R.drawable.pokedex)
 
+        // RecyclerView
         rvPokemon = findViewById(R.id.rvPokemon)
         rvPokemon.layoutManager = LinearLayoutManager(this)
 
@@ -33,22 +46,24 @@ class MainActivity : AppCompatActivity() {
                 putExtra("height", pokemon.height)
                 putExtra("weight", pokemon.weight)
                 putExtra("imageRes", pokemon.imageRes)
-                putExtra("description", when (pokemon.name) {
-                    "Pikachu" -> getString(R.string.descripcion_pika)
-                    "Charmander" -> getString(R.string.descripcion_char)
-                    else -> ""
-                })
+                putExtra(
+                    "description",
+                    when (pokemon.name) {
+                        "Pikachu" -> getString(R.string.descripcion_pika)
+                        "Charmander" -> getString(R.string.descripcion_char)
+                        else -> ""
+                    }
+                )
             }
             startActivity(intent)
         }
         rvPokemon.adapter = adapter
 
-        // inicializar base de datos
+        // Base de datos
         db = AppDatabase.getDatabase(this)
 
-        // cargar datos
+        // Cargar Pokémon
         lifecycleScope.launch {
-            // si la base esta vacia, insertar lista inicial
             if (db.pokemonDao().getAll().isEmpty()) {
                 db.pokemonDao().insertAll(
                     listOf(
@@ -64,9 +79,37 @@ class MainActivity : AppCompatActivity() {
                     )
                 )
             }
-            // obtener lista desde Room
             val pokemons = db.pokemonDao().getAll()
             adapter.updateData(pokemons)
+        }
+    }
+
+    // Menú toolbar
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+
+        // Mostrar icono de cerrar sesión solo si hay sesión recordada
+        val prefs = getSharedPreferences("preferenciasLogin", MODE_PRIVATE)
+        val sesionRecordada = prefs.getBoolean("recordarme", false)
+        menu?.findItem(R.id.action_cerrar_sesion)?.isVisible = sesionRecordada
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_cerrar_sesion -> {
+                // Borrar SharedPreferences
+                val prefs = getSharedPreferences("preferenciasLogin", MODE_PRIVATE)
+                prefs.edit().clear().apply()
+
+                // Volver al login
+                val intent = Intent(this, Login_Activity::class.java)
+                startActivity(intent)
+                finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

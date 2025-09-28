@@ -31,6 +31,14 @@ class Login_Activity : AppCompatActivity() {
         btnLogin = findViewById(R.id.Login)
         btnRegistrarse = findViewById(R.id.Registrarse)
 
+        // Si ya hay sesión recordada, saltar al MainActivity
+        val prefs = getSharedPreferences("preferenciasLogin", MODE_PRIVATE)
+        val sesionRecordada = prefs.getBoolean("recordarme", false)
+        if (sesionRecordada) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
+
         // Botón Registrarse
         btnRegistrarse.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
@@ -46,12 +54,22 @@ class Login_Activity : AppCompatActivity() {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
             } else {
                 if (validarUsuario(usuarioOEmail, password)) {
+
+                    // Guardar sesión si el checkbox está marcado
+                    if (reUsuario.isChecked) {
+                        prefs.edit().apply {
+                            putBoolean("recordarme", true)
+                            putString("usuario", usuarioOEmail) // opcional
+                            apply()
+                        }
+                    }
+
                     Toast.makeText(this, "Login exitoso", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {
-                    Toast.makeText(this, "Error datos incorrectos", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Error: datos incorrectos", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -70,7 +88,6 @@ class Login_Activity : AppCompatActivity() {
                     val mailGuardado = datos[1]
                     val passGuardada = datos[2]
 
-                    // Esto valida tanto por nickname como por email
                     if ((mailGuardado == usuarioOEmail || nicknameGuardado == usuarioOEmail) && passGuardada == password) {
                         reader.close()
                         return true
