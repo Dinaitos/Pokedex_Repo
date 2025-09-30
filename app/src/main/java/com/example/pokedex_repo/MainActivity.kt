@@ -22,8 +22,8 @@ class MainActivity : AppCompatActivity() {
 
         // Verificar sesión antes de cargar la UI
         val prefs = getSharedPreferences("preferenciasLogin", MODE_PRIVATE)
-        val sesionRecordada = prefs.getBoolean("recordarme", false)
-        if (!sesionRecordada) {
+        val logueado = prefs.getBoolean("logueado", false)
+        if (!logueado) {
             startActivity(Intent(this, Login_Activity::class.java))
             finish()
             return
