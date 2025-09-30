@@ -38,7 +38,7 @@ class Login_Activity : AppCompatActivity() {
         // Verifico si el recordarme esta activado
         val recordarme = prefs.getBoolean("recordarme", false)
 
-        // Solo paso al Main automáticamente si estaba logueado Y eligió recordarme
+        // Si ya hay sesión activa, saltar directamente al MainActivity
         if (recordarme && prefs.getBoolean("logueado", false)) {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
