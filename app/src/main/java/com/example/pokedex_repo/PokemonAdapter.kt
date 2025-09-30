@@ -14,6 +14,8 @@ class PokemonAdapter(
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val name: TextView = view.findViewById(R.id.tvName)
+        val height: TextView = view.findViewById(R.id.tvHeight)
+        val weight: TextView = view.findViewById(R.id.tvWeight)
         val image: ImageView = view.findViewById(R.id.ivImage)
     }
 
@@ -25,17 +27,21 @@ class PokemonAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val pokemon = list[position]
         holder.name.text = pokemon.name
+        holder.height.text = pokemon.height
+        holder.weight.text = pokemon.weight
         holder.image.setImageResource(pokemon.imageRes)
+
         holder.itemView.setOnClickListener { onItemClick(pokemon) }
     }
+
+    override fun getItemCount(): Int = list.size
 
     fun updateData(newList: List<Pokemon>) {
         list = newList
         notifyDataSetChanged()
     }
-
-    override fun getItemCount(): Int = list.size
 }
+
 
 
 
