@@ -25,7 +25,7 @@ class Login_Activity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
 
-        // --- Referencias a los elementos del XML ---
+        // Referencias a los elementos del XML
         textEmail = findViewById(R.id.TextEmail)
         textPassword = findViewById(R.id.TextPassword)
         reUsuario = findViewById(R.id.reUsuario)
@@ -35,18 +35,21 @@ class Login_Activity : AppCompatActivity() {
         // --- SharedPreferences ---
         val prefs = getSharedPreferences("preferenciasLogin", MODE_PRIVATE)
 
-        // Si ya hay sesión activa, saltar directamente al MainActivity
-        if (prefs.getBoolean("logueado", false)) {
+        // Verifico si el recordarme esta activado
+        val recordarme = prefs.getBoolean("recordarme", false)
+
+        // Solo paso al Main automáticamente si estaba logueado Y eligió recordarme
+        if (recordarme && prefs.getBoolean("logueado", false)) {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
 
-        // --- Botón Registrarse ---
+        // Botón Registrarse
         btnRegistrarse.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
 
-        // --- Botón Iniciar sesión ---
+        // Botón Iniciar sesión
         btnLogin.setOnClickListener {
             val usuarioOEmail = textEmail.text.toString().trim()
             val password = textPassword.text.toString().trim()
@@ -81,12 +84,6 @@ class Login_Activity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Valida el usuario y la contraseña leyendo el archivo usuarios.txt
-     * @param usuarioOEmail Nickname o email ingresado
-     * @param password Contraseña ingresada
-     * @return true si el usuario existe y la contraseña coincide, false si no
-     */
     private fun validarUsuario(usuarioOEmail: String, password: String): Boolean {
         try {
             openFileInput("usuarios.txt").use { fis ->
@@ -99,9 +96,7 @@ class Login_Activity : AppCompatActivity() {
                             val mailGuardado = datos[1]
                             val passGuardada = datos[2]
 
-                            if ((mailGuardado == usuarioOEmail || nicknameGuardado == usuarioOEmail) &&
-                                passGuardada == password
-                            ) {
+                            if ((mailGuardado == usuarioOEmail || nicknameGuardado == usuarioOEmail) && passGuardada == password) {
                                 return true
                             }
                         }
