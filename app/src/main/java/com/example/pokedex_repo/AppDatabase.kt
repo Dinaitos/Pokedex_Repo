@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Pokemon::class], version = 2)
+@Database(entities = [PokemonEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun pokemonDao(): PokemonDao
 
@@ -20,7 +20,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "pokemon_db"
                 )
-                    .fallbackToDestructiveMigration() // opcional, para reiniciar si cambia version
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance

@@ -9,13 +9,13 @@ import androidx.room.Query
 interface PokemonDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(pokemon: Pokemon)
+    suspend fun insert(pokemon: PokemonEntity)
 
     @Insert
-    suspend fun insertAll(pokemons: List<Pokemon>)
+    suspend fun insertAll(pokemons: List<PokemonEntity>)
 
     @Query("SELECT * FROM pokemon")
-    suspend fun getAll(): List<Pokemon>
+    suspend fun getAll(): List<PokemonEntity>
 
     @Query("DELETE FROM pokemon")
     suspend fun deleteAll()

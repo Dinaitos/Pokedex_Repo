@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/ivImage"
+        android:id="@+id/ivPokemonImage"
         android:layout_width="50dp"
         android:layout_height="50dp"/>
 
@@ -17,7 +17,7 @@
         android:layout_marginStart="16dp">
 
         <TextView
-            android:id="@+id/tvName"
+            android:id="@+id/tvPokemonName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"

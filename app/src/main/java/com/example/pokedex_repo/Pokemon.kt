@@ -1,15 +1,12 @@
 package com.example.pokedex_repo
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+data class PokemonResponse(
+    val results: List<PokemonResult>
+)
 
-@Entity(tableName = "pokemon")
-data class Pokemon(
-    @PrimaryKey(autoGenerate = true) val id: Int? = null, // Cambié a Int? = null
+data class PokemonResult(
     val name: String,
-    val height: String,
-    val weight: String,
-    val imageRes: Int
+    val url: String
 )
 
 
