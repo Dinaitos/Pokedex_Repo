@@ -3,7 +3,8 @@
     android:orientation="horizontal"
     android:padding="8dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/background_light">
 
     <ImageView
         android:id="@+id/ivPokemonImage"

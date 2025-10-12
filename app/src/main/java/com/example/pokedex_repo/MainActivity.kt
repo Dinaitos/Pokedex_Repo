@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
                 val detail = RetrofitInstance.api.getPokemonDetail(name)
                 val species = RetrofitInstance.api.getPokemonSpecies(detail.id.toString())
 
-                // ✅ Descripción (protegiendo nulos)
+                // Descripcion
                 val description = species.flavorTextEntries
                     ?.firstOrNull { it.language?.name == "en" }
                     ?.flavorText
@@ -69,10 +69,10 @@ class MainActivity : AppCompatActivity() {
                     ?.replace("\u000c", " ")
                     ?: "Sin descripción"
 
-                // ✅ Hábitat
+                // Habitat
                 val habitat = species.habitat?.name ?: "Desconocido"
 
-                // ✅ Imagen (protegiendo nulos)
+                // Imagen
                 val imageUrl = detail.sprites?.other?.officialArtwork?.frontDefault ?: ""
 
                 // 🔸 Enviar datos a la pantalla de detalle

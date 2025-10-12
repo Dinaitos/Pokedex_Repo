@@ -115,16 +115,26 @@ class DetailActivity : AppCompatActivity() {
 
     private fun getColorForType(type: String): Int {
         return when (type.lowercase()) {
-            "grass" -> R.color.grass
+            "normal" -> R.color.normal
             "fire" -> R.color.fire
             "water" -> R.color.water
+            "grass" -> R.color.grass
+            "flying" -> R.color.flying
+            "fighting" -> R.color.fighting
+            "poison" -> R.color.poison
             "electric" -> R.color.electric
+            "ground" -> R.color.ground
+            "rock" -> R.color.rock
             "psychic" -> R.color.psychic
             "ice" -> R.color.ice
+            "bug" -> R.color.bug
+            "ghost" -> R.color.ghost
             "dragon" -> R.color.dragon
             "dark" -> R.color.dark
             "fairy" -> R.color.fairy
+            "steel" -> R.color.steel
             else -> R.color.gray
         }
     }
+
 }
