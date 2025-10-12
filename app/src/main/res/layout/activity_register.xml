@@ -69,7 +69,7 @@
         android:id="@+id/Back"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Regresar"
+        android:text="Volver"
         app:layout_constraintTop_toBottomOf="@id/editTextTextPassword"
         app:layout_constraintStart_toEndOf="@id/NewUser"
         app:layout_constraintEnd_toEndOf="parent"

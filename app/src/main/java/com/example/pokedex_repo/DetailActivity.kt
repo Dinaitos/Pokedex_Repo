@@ -1,56 +1,56 @@
 package com.example.pokedex_repo
 
 import android.os.Bundle
-import android.view.View
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.addCallback
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 
 class DetailActivity : AppCompatActivity() {
+
+    private lateinit var tvName: TextView
+    private lateinit var tvHeight: TextView
+    private lateinit var tvWeight: TextView
+    private lateinit var tvHabitat: TextView
+    private lateinit var tvDescription: TextView
+    private lateinit var ivImage: ImageView
+
+    private val viewModel: PokemonDetailViewModel by viewModels {
+        ViewModelFactory(RetrofitInstance.api)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
-        // Manejo moderno del botón físico "Atrás"
-        onBackPressedDispatcher.addCallback(this) {
-            finish()
+        tvName = findViewById(R.id.tvName)
+        tvHeight = findViewById(R.id.tvHeight)
+        tvWeight = findViewById(R.id.tvWeight)
+        tvHabitat = findViewById(R.id.tvHabitat)
+        tvDescription = findViewById(R.id.tvDescription)
+        ivImage = findViewById(R.id.ivImage)
+
+        val name = intent.getStringExtra("name") ?: return
+        viewModel.loadPokemon(name)
+
+        lifecycleScope.launch {
+            viewModel.pokemonDetail.collectLatest { detail ->
+                if (detail.name.isNotEmpty()) {
+                    tvName.text = detail.name.replaceFirstChar { it.uppercase() }
+                    tvHeight.text = "Altura: ${detail.height} m"
+                    tvWeight.text = "Peso: ${detail.weight} kg"
+                    tvHabitat.text = "Hábitat: ${detail.habitat}"
+                    tvDescription.text = detail.description
+
+                    Glide.with(this@DetailActivity)
+                        .load(detail.imageUrl)
+                        .into(ivImage)
+                }
+            }
         }
-
-        // Referencias a la UI
-        val tvName: TextView = findViewById(R.id.tvName)
-        val tvHeight: TextView = findViewById(R.id.tvHeight)
-        val tvWeight: TextView = findViewById(R.id.tvWeight)
-        val ivImage: ImageView = findViewById(R.id.ivImage)
-        val tvDescription: TextView = findViewById(R.id.tvDescription)
-
-        // Recuperar datos del intent con valores por defecto
-        val name = intent.getStringExtra("name") ?: "Sin nombre"
-        val height = intent.getStringExtra("height") ?: "0"
-        val weight = intent.getStringExtra("weight") ?: "0"
-        val imageRes = intent.getIntExtra("imageRes", 0)
-        val description = intent.getStringExtra("description") ?: "Sin descripción"
-
-        // Mostrar datos en pantalla
-        tvName.text = name
-        tvHeight.text = "Altura: $height"
-        tvWeight.text = "Peso: $weight"
-        if (imageRes != 0) {
-            ivImage.setImageResource(imageRes)
-        } else {
-            ivImage.visibility = View.GONE
-        }
-
-        // Mostrar descripción solo si hay texto
-        tvDescription.text = description
-        tvDescription.visibility = if (description.isNotEmpty()) View.VISIBLE else View.GONE
-    }
-
-    // Manejo del botón "back" de la Toolbar
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressedDispatcher.onBackPressed()
-        return true
     }
 }
