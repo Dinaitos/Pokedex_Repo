@@ -2,4 +2,15 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="grass">#78C850</color>
+    <color name="fire">#F08030</color>
+    <color name="water">#6890F0</color>
+    <color name="electric">#F8D030</color>
+    <color name="psychic">#F85888</color>
+    <color name="ice">#98D8D8</color>
+    <color name="dragon">#7038F8</color>
+    <color name="dark">#705848</color>
+    <color name="fairy">#EE99AC</color>
+    <color name="gray">#A8A878</color>
+
 </resources>

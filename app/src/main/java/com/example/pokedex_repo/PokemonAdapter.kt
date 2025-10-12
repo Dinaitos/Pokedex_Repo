@@ -30,7 +30,7 @@ class PokemonAdapter(
         // Nombre con mayúscula inicial
         holder.tvName.text = pokemon.name.replaceFirstChar { it.uppercase() }
 
-        // Obtener el número del Pokémon a partir del URL (viene así: https://pokeapi.co/api/v2/pokemon/25/)
+        // Obtener el número del Pokémon
         val id = pokemon.url.split("/").filter { it.isNotEmpty() }.last()
 
         // Cargar imagen desde la API oficial de sprites

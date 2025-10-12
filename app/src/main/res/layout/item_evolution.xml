@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="6dp">
+
+    <ImageView
+        android:id="@+id/ivEvolution"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerInside" />
+
+    <TextView
+        android:id="@+id/tvEvolutionName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:layout_marginTop="6dp" />
+
+    <TextView
+        android:id="@+id/tvEvolutionLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="#666"
+        android:layout_marginTop="2dp" />
+</LinearLayout>

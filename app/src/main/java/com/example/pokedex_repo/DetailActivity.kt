@@ -1,56 +1,130 @@
 package com.example.pokedex_repo
 
 import android.os.Bundle
+import android.view.Gravity
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import android.widget.ImageView
-import android.widget.TextView
 
 class DetailActivity : AppCompatActivity() {
 
-    private lateinit var tvName: TextView
-    private lateinit var tvHeight: TextView
-    private lateinit var tvWeight: TextView
-    private lateinit var tvHabitat: TextView
-    private lateinit var tvDescription: TextView
-    private lateinit var ivImage: ImageView
-
-    private val viewModel: PokemonDetailViewModel by viewModels {
-        ViewModelFactory(RetrofitInstance.api)
-    }
+    private val viewModel: PokemonDetailViewModel by viewModels { ViewModelFactory(RetrofitInstance.api) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
-        tvName = findViewById(R.id.tvName)
-        tvHeight = findViewById(R.id.tvHeight)
-        tvWeight = findViewById(R.id.tvWeight)
-        tvHabitat = findViewById(R.id.tvHabitat)
-        tvDescription = findViewById(R.id.tvDescription)
-        ivImage = findViewById(R.id.ivImage)
+        val ivImage = findViewById<ImageView>(R.id.ivImage)
+        val tvName = findViewById<TextView>(R.id.tvName)
+        val tvHeight = findViewById<TextView>(R.id.tvHeight)
+        val tvWeight = findViewById<TextView>(R.id.tvWeight)
+        val tvHabitat = findViewById<TextView>(R.id.tvHabitat)
+        val tvDescription = findViewById<TextView>(R.id.tvDescription)
+        val typesContainer = findViewById<LinearLayout>(R.id.tvTypes)
+        val statsContainer = findViewById<LinearLayout>(R.id.tvStats)
+        val evoContainer = findViewById<LinearLayout>(R.id.tvEvolutionsContainer)
 
         val name = intent.getStringExtra("name") ?: return
         viewModel.loadPokemon(name)
 
         lifecycleScope.launch {
             viewModel.pokemonDetail.collectLatest { detail ->
-                if (detail.name.isNotEmpty()) {
-                    tvName.text = detail.name.replaceFirstChar { it.uppercase() }
-                    tvHeight.text = "Altura: ${detail.height} m"
-                    tvWeight.text = "Peso: ${detail.weight} kg"
-                    tvHabitat.text = "Hábitat: ${detail.habitat}"
-                    tvDescription.text = detail.description
+                // Basic info
+                tvName.text = detail.name.replaceFirstChar { it.uppercase() }
+                tvHeight.text = "Altura: ${detail.height} m"
+                tvWeight.text = "Peso: ${detail.weight} kg"
+                tvHabitat.text = "Hábitat: ${detail.habitat}"
+                tvDescription.text = detail.description
 
-                    Glide.with(this@DetailActivity)
-                        .load(detail.imageUrl)
-                        .into(ivImage)
+                Glide.with(this@DetailActivity).load(detail.imageUrl).into(ivImage)
+
+                // types as chips
+                typesContainer.removeAllViews()
+                detail.types.forEach { type ->
+                    val chip = TextView(this@DetailActivity).apply {
+                        text = type.replaceFirstChar { it.uppercase() }
+                        setPadding(20, 8, 20, 8)
+                        setTextColor(ContextCompat.getColor(context, android.R.color.white))
+                        background = ContextCompat.getDrawable(context, R.drawable.type_chip_bg)
+                        val lp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                        lp.setMargins(8, 0, 8, 0)
+                        layoutParams = lp
+                    }
+                    // tint the chip drawable to type color
+                    chip.background.setTint(ContextCompat.getColor(this@DetailActivity, getColorForType(type)))
+                    typesContainer.addView(chip)
+                }
+
+                // stats list
+                statsContainer.removeAllViews()
+                detail.stats.forEach { s ->
+                    val tv = TextView(this@DetailActivity).apply {
+                        text = "${s.name.replaceFirstChar { it.uppercase() }}: ${s.value}"
+                        textSize = 14f
+                    }
+                    statsContainer.addView(tv)
+                }
+
+                // evolutions visual
+                evoContainer.removeAllViews()
+                if (detail.evolutionChain.isNotEmpty()) {
+                    detail.evolutionChain.forEachIndexed { index, evo ->
+                        val evoView = layoutInflater.inflate(R.layout.item_evolution, evoContainer, false)
+                        val evoIv = evoView.findViewById<ImageView>(R.id.ivEvolution)
+                        val evoNameTv = evoView.findViewById<TextView>(R.id.tvEvolutionName)
+                        val evoLevelTv = evoView.findViewById<TextView>(R.id.tvEvolutionLevel)
+
+                        evoNameTv.text = evo.name.replaceFirstChar { it.uppercase() }
+                        evoLevelTv.text = evo.minLevel?.let { "Lvl $it" } ?: ""
+
+                        Glide.with(this@DetailActivity).load(evo.imageUrl).into(evoIv)
+                        evoContainer.addView(evoView)
+
+                        if (index < detail.evolutionChain.lastIndex) {
+                            val arrowTv = TextView(this@DetailActivity).apply {
+                                text = "→"
+                                textSize = 28f
+                                val lp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                                lp.gravity = Gravity.CENTER_VERTICAL
+                                lp.setMargins(12, 0, 12, 0)
+                                layoutParams = lp
+                            }
+                            evoContainer.addView(arrowTv)
+                        }
+                    }
+                } else {
+                    val noEvo = TextView(this@DetailActivity).apply { text = "Sin evoluciones" }
+                    evoContainer.addView(noEvo)
+                }
+
+                // optional: background color by primary type
+                if (detail.types.isNotEmpty()) {
+                    window.decorView.setBackgroundColor(ContextCompat.getColor(this@DetailActivity, getColorForType(detail.types.first())))
                 }
             }
+        }
+    }
+
+    private fun getColorForType(type: String): Int {
+        return when (type.lowercase()) {
+            "grass" -> R.color.grass
+            "fire" -> R.color.fire
+            "water" -> R.color.water
+            "electric" -> R.color.electric
+            "psychic" -> R.color.psychic
+            "ice" -> R.color.ice
+            "dragon" -> R.color.dragon
+            "dark" -> R.color.dark
+            "fairy" -> R.color.fairy
+            else -> R.color.gray
         }
     }
 }

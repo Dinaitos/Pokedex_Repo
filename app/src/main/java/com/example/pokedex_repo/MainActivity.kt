@@ -59,37 +59,38 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val detail = RetrofitInstance.api.getPokemonDetail(name)
-                val species = RetrofitInstance.api.getPokemonSpecies(name)
+                val species = RetrofitInstance.api.getPokemonSpecies(detail.id.toString())
 
-                // DESCRIPCION: usar los nombres que tenés en PokemonSpeciesResponse
+                // ✅ Descripción (protegiendo nulos)
                 val description = species.flavorTextEntries
-                    .firstOrNull { it.language.name == "en" }
+                    ?.firstOrNull { it.language?.name == "en" }
                     ?.flavorText
                     ?.replace("\n", " ")
                     ?.replace("\u000c", " ")
                     ?: "Sin descripción"
 
-                // HABITAT
+                // ✅ Hábitat
                 val habitat = species.habitat?.name ?: "Desconocido"
 
-                // IMAGEN: usar la propiedad frontDefault definida en tus data classes
-                val imageUrl = detail.sprites.other.officialArtwork.frontDefault
+                // ✅ Imagen (protegiendo nulos)
+                val imageUrl = detail.sprites?.other?.officialArtwork?.frontDefault ?: ""
 
+                // 🔸 Enviar datos a la pantalla de detalle
                 val intent = Intent(this@MainActivity, DetailActivity::class.java).apply {
                     putExtra("name", detail.name)
-                    putExtra("height", "${detail.height / 10} m")
-                    putExtra("weight", "${detail.weight / 10} kg")
+                    putExtra("height", "${detail.height / 10.0} m")
+                    putExtra("weight", "${detail.weight / 10.0} kg")
                     putExtra("description", description)
                     putExtra("habitat", habitat)
                     putExtra("imageUrl", imageUrl)
                 }
                 startActivity(intent)
+
             } catch (e: Exception) {
-                Log.e("DETAIL", "Error al traer detalle: ${e.message}")
+                Log.e("DETAIL", "Error al traer detalle: ${e.message}", e)
             }
         }
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)

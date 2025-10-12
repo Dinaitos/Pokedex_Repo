@@ -6,121 +6,86 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-data class PokemonFullDetail(
-    val name: String = "",
-    val height: Float = 0f,
-    val weight: Float = 0f,
-    val imageUrl: String = "",
-    val types: List<String> = emptyList(),
-    val stats: Map<String, Int> = emptyMap(),
-    val habitat: String = "",
-    val growthRate: String = "",
-    val description: String = "",
-    val evolutions: List<String> = emptyList()
-)
-
 class PokemonDetailViewModel(
     private val api: PokeApiService
 ) : ViewModel() {
 
-    private val _pokemonDetail = MutableStateFlow(PokemonFullDetail())
-    val pokemonDetail: StateFlow<PokemonFullDetail> = _pokemonDetail
+    private val _pokemonDetail = MutableStateFlow(PokemonDetailUi())
+    val pokemonDetail: StateFlow<PokemonDetailUi> = _pokemonDetail
 
-    fun loadPokemon(name: String) {
+    fun loadPokemon(nameOrId: String) {
         viewModelScope.launch {
             try {
-                // 1) llamadas suspend (Retrofit suspend functions)
-                val detailResponse = api.getPokemonDetail(name)
-                val speciesResponse = api.getPokemonSpecies(name)
+                // 1) detalle y especie (API suspends assumed)
+                val detail: PokemonDetailResponse = api.getPokemonDetail(nameOrId)
+                val species: PokemonSpeciesResponse = api.getPokemonSpecies(nameOrId)
 
-                // 2) imagen, tipos y stats (seguro con safe calls)
-                val imageUrl = detailResponse.sprites
-                    ?.other
-                    ?.officialArtwork
-                    ?.frontDefault
-                    ?: ""
+                // 2) tipos
+                val types = detail.types.mapNotNull { it.type.name }
 
-                val typesList = detailResponse.types?.mapNotNull { it.type?.name } ?: emptyList()
+                // 3) stats
+                val stats = detail.stats.map { Stat(it.stat.name, it.baseStat) }
 
-                // stats: tratamos de leer baseStat o base_stat (la mayoría usa baseStat)
-                val statsMap: Map<String, Int> = detailResponse.stats
-                    ?.mapNotNull { statSlot ->
-                        val statName = statSlot.stat?.name ?: return@mapNotNull null
-                        // intentar ambos nombres posibles
-                        val value = when {
-                            // si la propiedad se llama baseStat
-                            (statSlot::class.members.any { it.name == "baseStat" }) -> {
-                                statSlot::class.members.first { it.name == "baseStat" }
-                                    .call(statSlot) as? Int ?: 0
-                            }
-                            // si la propiedad se llama base_stat
-                            (statSlot::class.members.any { it.name == "base_stat" }) -> {
-                                statSlot::class.members.first { it.name == "base_stat" }
-                                    .call(statSlot) as? Int ?: 0
-                            }
-                            else -> {
-                                // fallback: tratar de acceder a "baseStat" con safe cast
-                                try {
-                                    val prop = statSlot::class.members.firstOrNull { it.name.contains("base") }
-                                    prop?.call(statSlot) as? Int ?: 0
-                                } catch (_: Exception) {
-                                    0
-                                }
-                            }
-                        }
-                        statName to value
-                    }?.toMap() ?: emptyMap()
-
-                // 3) descripción (flavor text) en inglés
-                val description = speciesResponse.flavorTextEntries
+                // 4) description (flavor text en inglés)
+                val description = species.flavorTextEntries
                     ?.firstOrNull { it.language?.name == "en" }
                     ?.flavorText
                     ?.replace("\n", " ")
                     ?.replace("\u000c", " ")
-                    ?: "No description available."
+                    ?: "Sin descripción."
 
-                // 4) habitat y growth rate
-                val habitat = speciesResponse.habitat?.name ?: "Unknown"
-                val growth = speciesResponse.growthRate?.name ?: "Unknown"
+                // 5) imagen principal (official artwork) fallback
+                val imageUrl = detail.sprites.other?.officialArtwork?.frontDefault
+                    ?: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png"
 
-                // 5) cadena de evolución (usar URL que devuelve species.evolutionChain.url)
-                val evolutions = mutableListOf<String>()
-                val evoUrl = speciesResponse.evolutionChain?.url
-                val evoId = evoUrl
-                    ?.split("/")
-                    ?.filter { it.isNotEmpty() }
-                    ?.lastOrNull()
-                    ?.toIntOrNull()
+                // 6) habitat y growthRate
+                val habitat = species.habitat?.name ?: "Desconocido"
+                val growth = species.growthRate?.name ?: "Unknown"
 
+                // 7) evoluciones: traer chain si species.evolutionChain.url existe
+                val evolutions = mutableListOf<EvolutionStage>()
+                val evoUrl = species.evolutionChain?.url
+                val evoId = evoUrl?.split("/")?.filter { it.isNotEmpty() }?.lastOrNull()?.toIntOrNull()
                 if (evoId != null) {
-                    val evoResponse = api.getEvolutionChain(evoId)
-                    // recorrer recursivamente o iterativamente
-                    var current = evoResponse.chain
-                    // primer nodo y siguientes
-                    if (current != null) {
-                        evolutions.add(current.species?.name ?: "")
-                        while (!current.evolvesTo.isNullOrEmpty()) {
-                            current = current.evolvesTo.first()
-                            evolutions.add(current.species?.name ?: "")
+                    val evoResponse: EvolutionChainResponse = api.getEvolutionChain(evoId)
+                    // recorrer la cadena iterativamente (obtener species.name y minLevel)
+                    var current: EvolutionChainLink? = evoResponse.chain
+                    while (current != null) {
+                        val evoName = current.species.name
+                        // obtener id del species.url (para construir image)
+                        val evoIdFromUrl = current.species.url.split("/").filter { it.isNotEmpty() }.lastOrNull()
+                        val evoImage = if (!evoIdFromUrl.isNullOrBlank()) {
+                            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$evoIdFromUrl.png"
+                        } else {
+                            ""
                         }
+                        val minLevel = current.evolutionDetails.firstOrNull()?.minLevel
+                        evolutions.add(EvolutionStage(evoName, evoImage, minLevel))
+                        current = current.evolvesTo.firstOrNull()
                     }
                 }
 
-                // 6) actualizar estado
-                _pokemonDetail.value = PokemonFullDetail(
-                    name = detailResponse.name ?: "",
-                    height = (detailResponse.height ?: 0f) / 10f,
-                    weight = (detailResponse.weight ?: 0f) / 10f,
+                // 8) armar UI model
+                val ui = PokemonDetailUi(
+                    name = detail.name,
+                    height = detail.height / 10.0,
+                    weight = detail.weight / 10.0,
                     imageUrl = imageUrl,
-                    types = typesList,
-                    stats = statsMap,
+                    types = types,
+                    stats = stats,
                     habitat = habitat,
-                    growthRate = growth,
+                    growthRate = growth ?: "",
                     description = description,
-                    evolutions = evolutions
+                    evolutionChain = evolutions
                 )
+
+                _pokemonDetail.value = ui
             } catch (e: Exception) {
                 e.printStackTrace()
+                _pokemonDetail.value = PokemonDetailUi(
+                    name = nameOrId,
+                    description = "Error: ${e.localizedMessage ?: e.message}"
+                )
             }
         }
     }
