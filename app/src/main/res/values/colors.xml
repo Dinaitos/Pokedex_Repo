@@ -2,26 +2,27 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <!-- 🎨 Colores por tipo de Pokémon -->
-    <color name="normal">#A8A77A</color>       <!-- Amarillo grisáceo -->
-    <color name="fire">#EE8130</color>         <!-- Naranja -->
-    <color name="water">#6390F0</color>        <!-- Azul -->
-    <color name="grass">#7AC74C</color>        <!-- Verde -->
-    <color name="flying">#A98FF3</color>       <!-- Gris violáceo -->
-    <color name="fighting">#C22E28</color>     <!-- Rojo oscuro -->
-    <color name="poison">#A33EA1</color>       <!-- Morado -->
-    <color name="electric">#F7D02C</color>     <!-- Amarillo -->
-    <color name="ground">#E2BF65</color>       <!-- Marrón claro -->
-    <color name="rock">#B6A136</color>         <!-- Marrón -->
-    <color name="psychic">#F95587</color>      <!-- Magenta -->
-    <color name="ice">#96D9D6</color>          <!-- Celeste -->
-    <color name="bug">#A6B91A</color>          <!-- Verde amarillento -->
-    <color name="ghost">#735797</color>        <!-- Morado oscuro -->
-    <color name="dragon">#6F35FC</color>       <!-- Azul claro -->
-    <color name="dark">#705746</color>         <!-- Negro/marrón oscuro -->
-    <color name="fairy">#D685AD</color>        <!-- Rosa -->
-    <color name="steel">#B7B7CE</color>        <!-- Gris metálico -->
-    <color name="gray">#A8A8A8</color>         <!-- Gris neutro -->
-
     <color name="background_light">#F2F2F2</color>
+
+    <!-- Colores por tipo de Pokemon -->
+    <color name="normal">#A8A77A</color>
+    <color name="fire">#EE8130</color>
+    <color name="water">#6390F0</color>
+    <color name="grass">#7AC74C</color>
+    <color name="flying">#A98FF3</color>
+    <color name="fighting">#C22E28</color>
+    <color name="poison">#A33EA1</color>
+    <color name="electric">#F7D02C</color>
+    <color name="ground">#E2BF65</color>
+    <color name="rock">#B6A136</color>
+    <color name="psychic">#F95587</color>
+    <color name="ice">#96D9D6</color>
+    <color name="bug">#A6B91A</color>
+    <color name="ghost">#735797</color>
+    <color name="dragon">#6F35FC</color>
+    <color name="dark">#705746</color>
+    <color name="fairy">#D685AD</color>
+    <color name="steel">#B7B7CE</color>
+    <color name="gray">#A8A8A8</color>
+
 </resources>

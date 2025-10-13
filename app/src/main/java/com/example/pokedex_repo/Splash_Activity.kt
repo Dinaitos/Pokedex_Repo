@@ -12,7 +12,7 @@ class Splash_Activity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash) // usa el xml directamente
+        setContentView(R.layout.activity_splash)
 
         val splashGif = findViewById<ImageView>(R.id.splashGif)
 

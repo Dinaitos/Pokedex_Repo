@@ -2,7 +2,7 @@ package com.example.pokedex_repo
 
 import com.google.gson.annotations.SerializedName
 
-// ---------------- API: Pokemon detail ----------------
+// API: Pokemon detail
 data class PokemonDetailResponse(
     val id: Int,
     val name: String,
@@ -43,7 +43,7 @@ data class NamedAPIResource(
     val url: String
 )
 
-// ---------------- API: species ----------------
+// API: species
 data class PokemonSpeciesResponse(
     val habitat: Habitat?,
     @SerializedName("flavor_text_entries")
@@ -62,7 +62,7 @@ data class FlavorTextEntry(
 )
 data class EvolutionChainRef(val url: String?)
 
-// ---------------- API: evolution chain ----------------
+// API: evolution chain
 data class EvolutionChainResponse(
     val id: Int,
     val chain: EvolutionChainLink
@@ -81,7 +81,7 @@ data class EvolutionDetail(
     val minLevel: Int?
 )
 
-// ---------------- UI models used by ViewModel / Activity ----------------
+// UI models used by ViewModel / Activity
 data class EvolutionStage(
     val name: String,
     val imageUrl: String,

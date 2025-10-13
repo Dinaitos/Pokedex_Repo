@@ -3,14 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="@color/background_light">
+    android:background="@drawable/pxv2">
 
     <LinearLayout
         android:id="@+id/detailContainer"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:layout_marginTop="66dp">
 
         <ImageView
             android:id="@+id/ivImage"
@@ -41,21 +42,33 @@
 
             <TextView
                 android:id="@+id/tvHeight"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp" />
 
             <TextView
                 android:id="@+id/tvWeight"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/tvHabitat"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvInfoTitle"
+            android:text="Información del Pokémon"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
 
         <TextView
             android:id="@+id/tvDescription"
@@ -75,12 +88,12 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="8dp" />
 
         <TextView
             android:text="Evoluciones"
             android:textStyle="bold"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="2dp"
             android:layout_marginBottom="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -89,11 +102,11 @@
             android:id="@+id/tvEvolutionsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_horizontal"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="20dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
             android:padding="4dp" />
 
     </LinearLayout>

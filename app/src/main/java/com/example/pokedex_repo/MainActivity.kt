@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
                 // Descripcion
                 val description = species.flavorTextEntries
-                    ?.firstOrNull { it.language?.name == "en" }
+                    ?.firstOrNull { it.language?.name == "es" }
                     ?.flavorText
                     ?.replace("\n", " ")
                     ?.replace("\u000c", " ")
