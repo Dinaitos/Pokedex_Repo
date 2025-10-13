@@ -26,7 +26,7 @@ class PokemonDetailViewModel(
                 // 3) stats
                 val stats = detail.stats.map { Stat(it.stat.name, it.baseStat) }
 
-                // 4) description
+                // 4) descripcion
                 val description = species.flavorTextEntries
                     ?.firstOrNull { it.language?.name == "es" }
                     ?.flavorText
@@ -34,7 +34,7 @@ class PokemonDetailViewModel(
                     ?.replace("\u000c", " ")
                     ?: "Sin descripción."
 
-                // 5) imagen principal (official artwork) fallback
+                // 5) imagen principal (official artwork)
                 val imageUrl = detail.sprites.other?.officialArtwork?.frontDefault
                     ?: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png"
 

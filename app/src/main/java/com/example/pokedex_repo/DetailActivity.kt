@@ -49,7 +49,7 @@ class DetailActivity : AppCompatActivity() {
                     .load(detail.imageUrl)
                     .into(ivImage)
 
-                // --- Tipos (chips) ---
+                // Tipos (chips)
                 typesContainer.removeAllViews()
                 detail.types.forEach { type ->
                     val chip = TextView(this@DetailActivity).apply {
@@ -70,7 +70,7 @@ class DetailActivity : AppCompatActivity() {
                     typesContainer.addView(chip)
                 }
 
-                // --- Estadísticas con barras ---
+                // Estadísticas con barras
                 statsContainer.removeAllViews()
                 val maxStat = 255 // valor máximo posible
 
@@ -89,7 +89,7 @@ class DetailActivity : AppCompatActivity() {
                     statsContainer.addView(statView)
                 }
 
-                // --- Evoluciones ---
+                // Evoluciones
                 evoContainer.removeAllViews()
                 if (detail.evolutionChain.isNotEmpty()) {
                     detail.evolutionChain.forEachIndexed { index, evo ->
@@ -129,13 +129,6 @@ class DetailActivity : AppCompatActivity() {
                         gravity = Gravity.CENTER
                     }
                     evoContainer.addView(noEvo)
-                }
-
-                // --- Color de fondo por tipo ---
-                if (detail.types.isNotEmpty()) {
-                    window.decorView.setBackgroundColor(
-                        ContextCompat.getColor(this@DetailActivity, getColorForType(detail.types.first()))
-                    )
                 }
             }
         }
