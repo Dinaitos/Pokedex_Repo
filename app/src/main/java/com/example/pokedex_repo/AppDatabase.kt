@@ -5,9 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [PokemonEntity::class], version = 1)
+@Database(entities = [PokemonEntity::class, Usuario::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun pokemonDao(): PokemonDao
+    abstract fun usuarioDao(): UsuarioDao
 
     companion object {
         @Volatile
@@ -18,9 +19,9 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "pokemon_db"
+                    "pokedex_db" // un nombre más general ahora
                 )
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration() // útil si cambias entities o version
                     .build()
                 INSTANCE = instance
                 instance

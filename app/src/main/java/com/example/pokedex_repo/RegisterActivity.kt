@@ -5,9 +5,12 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.enableEdgeToEdge
-import java.io.FileOutputStream
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -22,12 +25,15 @@ class RegisterActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_register)
 
-        // Referencias a los elementos del XML
+        // Referencias al XML
         nickName = findViewById(R.id.NickName)
         email = findViewById(R.id.editTextTextEmailAddress)
         password = findViewById(R.id.editTextTextPassword)
         btnNewUser = findViewById(R.id.NewUser)
         btnBack = findViewById(R.id.Back)
+
+        // Instancia de la base de datos
+        val db = AppDatabase.getDatabase(this)
 
         // Botón Registrarse
         btnNewUser.setOnClickListener {
@@ -38,33 +44,30 @@ class RegisterActivity : AppCompatActivity() {
             if (user.isEmpty() || mail.isEmpty() || pass.isEmpty()) {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
             } else {
-                guardarUsuario(user, mail, pass)
-                Toast.makeText(this, "Usuario registrado con éxito", Toast.LENGTH_SHORT).show()
+                // Guardar usuario en Room usando corutinas
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val nuevoUsuario = Usuario(nickname = user, email = mail, password = pass)
+                    db.usuarioDao().insertarUsuario(nuevoUsuario)
 
-                // Vuelve al login
-                val intent = Intent(this, Login_Activity::class.java)
-                startActivity(intent)
-                finish()
+                    // Volver al hilo principal para mostrar Toast y volver al login
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@RegisterActivity,
+                            "Usuario registrado con éxito",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        startActivity(Intent(this@RegisterActivity, Login_Activity::class.java))
+                        finish()
+                    }
+                }
             }
         }
 
         // Botón Regresar
         btnBack.setOnClickListener {
             Toast.makeText(this, "Volviendo al login", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, Login_Activity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, Login_Activity::class.java))
             finish()
-        }
-    }
-
-    private fun guardarUsuario(user: String, mail: String, pass: String) {
-        try {
-            val fos: FileOutputStream = openFileOutput("usuarios.txt", MODE_APPEND)
-            val linea = "$user;$mail;$pass\n"
-            fos.write(linea.toByteArray())
-            fos.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 }
